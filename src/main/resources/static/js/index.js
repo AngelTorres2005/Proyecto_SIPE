@@ -29,7 +29,7 @@ async function pacientesContenedor() {
                     
                     <td class="px-1">
                         <div class="d-flex justify-content-center gap-1" style="min-width: 180px;">
-                            <button class="btn btn-sm btn-outline-secondary rounded-0" title="Ver Info Completa" data-bs-toggle="modal" data-bs-target="#modalVerPaciente">
+                            <button class="btn btn-sm btn-outline-secondary rounded-0" title="Ver Info Completa" onclick="informacionPaciente('${paciente.id_paciente}', '${paciente.nombre}','${paciente.fecha_nacimiento}','${paciente.genero}','${paciente.email}','${paciente.notas_clinicas}')">
                                 <i class="fas fa-user"></i>
                             </button>
                             <button class="btn btn-sm btn-outline-dark rounded-0" title="Editar Datos" onclick="modalEditarPaciente('${paciente.id_paciente}', '${paciente.nombre}','${paciente.fecha_nacimiento}','${paciente.genero}','${paciente.email}','${paciente.notas_clinicas}')">
@@ -84,6 +84,18 @@ async function eliminarPaciente(id) {
         }
     }
 }
+async function informacionPaciente(id,nombre,fecha,genero,email,notas){
+    console.log(nombre, fecha);
+    const modal = document.getElementById("modalVerPaciente")
+    document.getElementById("informacion-id-value").textContent = id;
+    document.getElementById("informacion-nombre-value").textContent = nombre;
+    document.getElementById("informacion-fecha-value").textContent = fecha;
+    document.getElementById("informacion-genero-value").textContent = genero;
+    document.getElementById("informacion-email-value").textContent = email;
+    document.getElementById("informacion-notas-value").textContent = notas;
+    new bootstrap.Modal(modal).show();
+
+}
 function modalEditarPaciente(id,nombre,fecha,genero,email,notas){
     const modal = document.getElementById('modalEditarPaciente');
     document.getElementById('editar-id_paciente').value = id;
@@ -94,7 +106,6 @@ function modalEditarPaciente(id,nombre,fecha,genero,email,notas){
     document.getElementById('editar-notas_clinicas').value = notas;
     new bootstrap.Modal(modal).show();
 }
-
 //////////////////////////FRONTEND///////////////////////////////////////////////
 function sweetAlertError() {
     if (window.alertaError) {
@@ -138,5 +149,3 @@ function sweetAlertSuccess() {
         });
     }
 }
-
-
