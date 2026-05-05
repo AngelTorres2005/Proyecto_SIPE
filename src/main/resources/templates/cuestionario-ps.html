@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuestionario PSS - Nombre</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body class="bg-light">
+
+    <header class="bg-white shadow-sm py-3 mb-5">
+        <div class="container d-flex justify-content-between align-items-center">
+            <h2 class="logo-box d-inline-block px-3 py-1 m-0 fs-5 text-uppercase tracking-wide">SIPE</h2>
+            <a href="/" class="btn btn-outline-secondary btn-sm">Volver al Inicio</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                
+                <div class="card border-0 shadow-sm rounded-0 mb-4">
+                    <div class="card-body p-5">
+                        <h3 class="fw-bold mb-3 text-center">Escala de Ideación Suicida de Paykel (PSS)</h3>
+                        <p class="text-muted text-center mb-4">A veces nos faltan fuerzas, nos sentimos especialmente mal, e incluso nos pueden venir pensamientos relacionados con la muerte, ¿Podrías indicar por favor si has sentido o experimentado esto durante el último año? Recuerda que todas tus respuestas son anónimas.
+                        </p>
+                    </div>
+                </div>
+
+                <form>
+                    <div class="card border-0 shadow-sm rounded-0 mb-4">
+                        <div class="card-body p-4 p-md-5">
+                            <h5 class="fw-bold mb-4">1. ¿Has sentido que la vida no merece la pena? </h5>
+                            
+                            <div class="d-flex gap-4 mb-4">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="p1_dicotomica" id="p1_si" value="si">
+                                    <label class="form-check-label fs-5" for="p1_si">Sí</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="p1_dicotomica" id="p1_no" value="no">
+                                    <label class="form-check-label fs-5" for="p1_no">No</label>
+                                </div>
+                            </div>
+
+                            <div class="p-3 bg-light border">
+                                <p class="small text-muted mb-3">Si respondiste "Sí", indica las veces que lo has pensado (1 = Poquísimas veces, 7 = Muchísimas veces) [cite: 379]</p>
+                                <div class="d-flex justify-content-between flex-wrap gap-2">
+                                    <div class="form-check"><input class="form-check-input" type="radio" name="p1_frecuencia" value="1"><label class="form-check-label">1</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="radio" name="p1_frecuencia" value="2"><label class="form-check-label">2</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="radio" name="p1_frecuencia" value="3"><label class="form-check-label">3</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="radio" name="p1_frecuencia" value="4"><label class="form-check-label">4</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="radio" name="p1_frecuencia" value="5"><label class="form-check-label">5</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="radio" name="p1_frecuencia" value="6"><label class="form-check-label">6</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="radio" name="p1_frecuencia" value="7"><label class="form-check-label">7</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-end mb-5">
+                        <button type="submit" class="btn btn-dark btn-lg rounded-0 px-5 text-uppercase tracking-wide">Finalizar Evaluación</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

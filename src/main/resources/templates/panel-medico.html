@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Médico - Nombre</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/estilos.css">
+    <style>
+        .form-control, .form-select { border-radius: 0; }
+        .form-control:focus, .form-select:focus { border-color: #212529; box-shadow: 0 0 0 0.25rem rgba(33, 37, 41, 0.1); }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3 shadow-sm">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand text-uppercase tracking-wide fw-bold border border-white p-2" href="#">SIPE</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav align-items-center gap-3">
+                <li class="nav-item"><a class="nav-link active" href="#"><i class="fas fa-chart-pie me-1"></i> Dashboard</a></li>
+                <li class="nav-item ms-lg-3"><a href="/" class="btn btn-outline-light btn-sm rounded-0">Cerrar Sesión</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<main class="container-fluid px-4 my-5">
+    <div class="d-flex justify-content-between align-items-end mb-4 border-bottom pb-3">
+        <div>
+            <h2 class="fw-bold m-0">Resumen Clínico</h2>
+            <p class="text-muted small m-0">Vista general de evaluaciones psicológicas recientes.</p>
+        </div>
+        <button class="btn btn-dark rounded-0 shadow-sm" data-bs-toggle="modal" data-bs-target="#modalAgregarPaciente">
+            <i class="fas fa-user-plus me-2"></i> Agregar nuevo paciente
+        </button>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-0">
+        <div class="card-header bg-white border-bottom py-3">
+            <h5 class="m-0 fw-bold"><i class="fas fa-clipboard-list me-2"></i> Evaluaciones Recientes</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle m-0">
+                    <thead class="table-light">
+                    <tr>
+                        <th class="text-uppercase small text-muted px-4 py-3">ID</th>
+                        <th class="text-uppercase small text-muted py-3">Nombre Completo</th>
+                        <th class="text-uppercase small text-muted py-3">Fecha</th>
+                        <th class="text-uppercase small text-muted py-3">Instrumento</th>
+                        <th class="text-uppercase small text-muted py-3 text-center">Puntuación</th>
+                        <th class="text-uppercase small text-muted py-3">Nivel de Riesgo</th>
+                        <th class="text-uppercase small text-muted text-center py-3 px-1" style="width: 1%;">Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody id="pacientesContenedor">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!--MODALES-->
+<div class="modal fade" id="modalAgregarPaciente" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content rounded-0 border-0 shadow">
+            <div class="modal-header bg-dark text-white rounded-0">
+                <h5 class="modal-title fw-bold text-uppercase small tracking-wide"><i class="fas fa-user-plus me-2"></i> Registrar Nuevo Paciente</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="formAgregarPaciente" action="/agregarPaciente" method="POST">
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="form-label small text-muted fw-bold">Nombres</label><input name="nombre" type="text" class="form-control" required placeholder="Ej. Juan Antonio"></div>
+                        <div class="col-md-4"><label class="form-label small text-muted fw-bold">Fecha de Nacimiento</label><input name="fecha_nacimiento" type="date" class="form-control" required></div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-muted fw-bold">Género</label>
+                            <select class="form-select" required name="genero">
+                                <option value="" selected disabled>Seleccionar...</option>
+                                <option value="M">Masculino</option>
+                                <option value="F">Femenino</option>
+                                <option value="O">Otro</option></select>
+                        </div>
+                        <div class="col-12"><label class="form-label small text-muted fw-bold">Correo Electrónico</label><input name="email" type="email" class="form-control" required placeholder="juan.perez@example.com"></div>
+                        <div class="col-12">
+                            <label class="form-label small text-muted fw-bold">Notas Clínicas Iniciales (Opcional)</label>
+                            <textarea name="observaciones" class="form-control" rows="3" placeholder="Observaciones de ingreso..."></textarea></div>
+                    </div>
+                    <div class="modal-footer bg-light rounded-0">
+                        <button type="button" class="btn btn-outline-secondary rounded-0" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" form="formAgregarPaciente" class="btn btn-dark rounded-0 px-4">Guardar Paciente</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalVerPaciente" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content rounded-0 border-0 shadow">
+            <div class="modal-header bg-primary text-white rounded-0">
+                <h5 class="modal-title fw-bold text-uppercase small tracking-wide"><i class="fas fa-address-card me-2"></i> Expediente del Paciente</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <p class="mb-1 small text-muted fw-bold text-uppercase">Nombre Completo</p>
+                        <p class="fs-5 border-bottom pb-2">Juan Pérez García</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-1 small text-muted fw-bold text-uppercase">DNI / Identificación</p>
+                        <p class="fs-5 border-bottom pb-2">12345678Z</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="mb-1 small text-muted fw-bold text-uppercase">Fecha de Nacimiento</p>
+                        <p class="fs-6 border-bottom pb-2">15/05/1985</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="mb-1 small text-muted fw-bold text-uppercase">Género</p>
+                        <p class="fs-6 border-bottom pb-2">Masculino</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="mb-1 small text-muted fw-bold text-uppercase">Correo Electrónico</p>
+                        <p class="fs-6 border-bottom pb-2">juan.perez@example.com</p>
+                    </div>
+                    <div class="col-12">
+                        <p class="mb-1 small text-muted fw-bold text-uppercase">Notas Clínicas</p>
+                        <div class="p-3 bg-light border">El paciente reporta niveles de estrés elevados en el último mes. Requiere seguimiento prioritario.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer bg-light rounded-0">
+                <button type="button" class="btn btn-dark rounded-0 px-4" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalEditarPaciente" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content rounded-0 border-0 shadow">
+            <div class="modal-header bg-secondary text-white rounded-0">
+                <h5 class="modal-title fw-bold text-uppercase small tracking-wide"><i class="fas fa-user-edit me-2"></i> Editar Datos</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="formEditarPaciente" action="/editarDatosPaciente">
+                    <div class="row g-3">
+                        <input type="hidden" name="id_paciente" id="editar-id_paciente">
+
+                        <div class="col-md-6">
+                            <label for="editar-nombre" class="form-label small text-muted fw-bold">Nombre completo</label>
+                            <input type="text" class="form-control" id="editar-nombre" name="nombre">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="editar-genero" class="form-label small text-muted fw-bold">Género</label>
+                            <select class="form-select" id="editar-genero" name="genero">
+                                <option value="M">Masculino</option>
+                                <option value="F">Femenino</option>
+                                <option value="O">Otro</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="editar-fecha-nacimiento" class="form-label small text-muted fw-bold">Fecha de nacimiento</label>
+                            <input type="date" class="form-control" id="editar-fecha-nacimiento" name="fecha_nacimiento">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="editar-email" class="form-label small text-muted fw-bold">Correo electrónico</label>
+                            <input type="email" class="form-control" id="editar-email" name="email">
+                        </div>
+
+                        <div class="col-md-12">
+                            <label for="editar-notas_clinicas" class="form-label small text-muted fw-bold">Notas clínicas</label>
+                            <textarea class="form-control" id="editar-notas_clinicas" name="notas_clinicas" rows="3" placeholder="Escribe aquí las notas o antecedentes del paciente..."></textarea>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer bg-light rounded-0">
+                <button type="button" class="btn btn-outline-secondary rounded-0" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit"  form="formEditarPaciente" class="btn btn-secondary rounded-0 px-4">Actualizar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</script>
+<script src="/js/index.js"></script>
+<script th:inline="javascript">
+    window.alertaError = [[${alertaError}]];
+    window.alertaSuccess = [[${alertaSuccess}]];
+</script>
+</body>
+</html>

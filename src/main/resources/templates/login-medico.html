@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Médico - Nombre</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/estilos.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body class="bg-light d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-5">
+
+                <div class="card border-0 shadow-lg rounded-0">
+                    <div class="card-body p-5">
+
+                        <div class="text-center mb-4">
+                            <h2 class="logo-box d-inline-block px-3 py-2 m-0 fs-4 text-uppercase tracking-wide">SIPE</h2>
+                            <p class="text-muted mt-3 small">Sistema de Indicadores Psicológicos Especializados</p>
+                            <p class="text-muted mt-3 small">Acceso exclusivo para profesionales de la salud.</p>
+                        </div>
+
+                        <form action="/login" method="POST">
+
+                            <div class="mb-4">
+                                <label for="medicoEmail" class="form-label small fw-bold text-uppercase">Correo
+                                    Electrónico o Cédula</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0 rounded-0">
+                                        <i class="fas fa-user-md text-muted"></i>
+                                    </span>
+                                    <input type="email" class="form-control border-start-0 rounded-0 px-2 shadow-none"
+                                        id="medicoEmail" name="email" placeholder="ej. doctor@clinica.com" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label for="medicoPassword"
+                                        class="form-label small fw-bold text-uppercase m-0">Contraseña</label>
+                                    <a href="#"
+                                        class="small text-dark text-decoration-none border-bottom border-dark">¿Olvidaste
+                                        tu contraseña?</a>
+                                </div>
+                                <div class="input-group mt-2">
+                                    <span class="input-group-text bg-white border-end-0 rounded-0">
+                                        <i class="fas fa-lock text-muted"></i>
+                                    </span>
+                                    <input type="password"
+                                        class="form-control border-start-0 rounded-0 px-2 shadow-none"
+                                        id="medicoPassword" name="password" placeholder="••••••••" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-4 form-check">
+                                <input type="checkbox" class="form-check-input rounded-0" id="rememberMe"
+                                    name="remember_me">
+                                <label class="form-check-label small text-muted" for="rememberMe">Mantener sesión
+                                    iniciada</label>
+                            </div>
+
+                            <div class="d-grid mt-5">
+                                <button type="submit"
+                                    class="btn btn-dark rounded-0 py-2 text-uppercase tracking-wide fw-bold">Iniciar
+                                    Sesión</button>
+                            </div>
+
+
+                        </form>
+
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <p class="text-muted small">
+                        ¿No tienes cuenta? <br>
+                        <a href="/registro" class="text-muted small">Registrate</a>
+                    </p>
+                </div>
+                <div class="text-center mt-4">
+                    <a class="text-muted small" href="/index">
+                        Mas informacion acerca de las pruebas hechas en SIPE <br>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+    </script>
+    <script src="/js/login.js"></script>
+    <script th:inline="javascript">
+        window.alertaError = [[${alertaError}]];
+        window.alertaSuccess = [[${alertaSuccess}]];
+    </script>
+</body>
+
+</html>
