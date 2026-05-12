@@ -3,71 +3,291 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cuestionario PSS - Nombre</title>
+    <title>Cuestionario PSS - SIPE</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/estilos.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .step { display: none; }
+        .step.active { display: block; animation: fadeIn 0.5s; }
+
+        .freq-container { display: none; animation: fadeIn 0.4s; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .progress { height: 10px; border-radius: 0; }
+    </style>
 </head>
 <body class="bg-light">
-
-    <header class="bg-white shadow-sm py-3 mb-5">
+    <header class="bg-white shadow-sm py-3 mb-4">
         <div class="container d-flex justify-content-between align-items-center">
             <h2 class="logo-box d-inline-block px-3 py-1 m-0 fs-5 text-uppercase tracking-wide">SIPE</h2>
-            <a href="/" class="btn btn-outline-secondary btn-sm">Volver al Inicio</a>
+            <div class="text-muted small fw-bold text-uppercase">Evaluación Psicológica</div>
         </div>
     </header>
-
+    <div class="progress mb-4">
+        <div id="progressBar" class="progress-bar bg-dark" role="progressbar" style="width: 0%;"></div>
+    </div>
     <main class="container">
         <div class="row justify-content-center">
+            <!--CONTENEDOR CON EL FORMULARIO-->
             <div class="col-lg-8">
-                
-                <div class="card border-0 shadow-sm rounded-0 mb-4">
+                <div id="info-banner" class="card border-0 shadow-sm rounded-0 mb-4">
                     <div class="card-body p-5">
                         <h3 class="fw-bold mb-3 text-center">Escala de Ideación Suicida de Paykel (PSS)</h3>
-                        <p class="text-muted text-center mb-4">A veces nos faltan fuerzas, nos sentimos especialmente mal, e incluso nos pueden venir pensamientos relacionados con la muerte, ¿Podrías indicar por favor si has sentido o experimentado esto durante el último año? Recuerda que todas tus respuestas son anónimas.
+                        <p class="text-muted text-center mb-4">
+                            A veces nos faltan fuerzas, nos sentimos especialmente mal, e incluso nos pueden venir pensamientos relacionados con la muerte. 
+                            ¿Podrías indicar por favor si has sentido o experimentado esto durante el último año?
                         </p>
+                        <div class="alert alert-secondary text-center rounded-0 small" role="alert">
+                            <i class="fas fa-user-secret me-2"></i> Recuerda que todas tus respuestas son anónimas.
+                        </div>
+                        <div class="text-center mt-4">
+                            <button type="button" class="btn btn-dark rounded-0 px-5 text-uppercase fw-bold" onclick="startSurvey()">Comenzar Test</button>
+                        </div>
                     </div>
                 </div>
-
-                <form>
-                    <div class="card border-0 shadow-sm rounded-0 mb-4">
-                        <div class="card-body p-4 p-md-5">
-                            <h5 class="fw-bold mb-4">1. ¿Has sentido que la vida no merece la pena? </h5>
-                            
-                            <div class="d-flex gap-4 mb-4">
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="p1_dicotomica" id="p1_si" value="si">
-                                    <label class="form-check-label fs-5" for="p1_si">Sí</label>
+                <form id="pssForm" action="/guardar_evaluacion" method="POST">
+                    <input type="hidden" name="pacienteId" th:value="${pacienteId}">
+                    <input type="hidden" name="instrumentoId" th:value="${instrumentoId}">
+                    <!--PREGUNTAS CONTENEDORES-->
+                    <div class="step" id="step1">
+                        <div class="card border-0 shadow-sm rounded-0 mb-4">
+                            <div class="card-body p-4 p-md-5">
+                                <span class="badge bg-secondary mb-3 rounded-0">Pregunta 1 de 5</span>
+                                <h4 class="fw-bold mb-4">1. ¿Has sentido que la vida no merece la pena?</h4>
+                                <div class="d-flex gap-4 mb-4">
+                                    <div class="form-check"><input class="form-check-input" type="radio" name="p1_v" id="p1_si" value="1" onchange="toggleFrequency(1)"><label class="form-check-label fs-5" for="p1_si">Sí</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="radio" name="p1_v" id="p1_no" value="0" onchange="toggleFrequency(1)"><label class="form-check-label fs-5" for="p1_no">No</label></div>
                                 </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="p1_dicotomica" id="p1_no" value="no">
-                                    <label class="form-check-label fs-5" for="p1_no">No</label>
+                                <div class="p-3 bg-light border freq-container" id="freq_1">
+                                    <p class="small text-muted mb-2">Frecuencia (1 = Poquísimas veces, 7 = Muchísimas veces)</p>
+                                    <div class="d-flex justify-content-between flex-wrap gap-2">
+                                        <label class="small">1 <input type="radio" name="p1_f" value="1"></label>
+                                        <label class="small">2 <input type="radio" name="p1_f" value="2"></label>
+                                        <label class="small">3 <input type="radio" name="p1_f" value="3"></label>
+                                        <label class="small">4 <input type="radio" name="p1_f" value="4"></label>
+                                        <label class="small">5 <input type="radio" name="p1_f" value="5"></label>
+                                        <label class="small">6 <input type="radio" name="p1_f" value="6"></label>
+                                        <label class="small">7 <input type="radio" name="p1_f" value="7"></label>
+                                    </div>
                                 </div>
-                            </div>
-
-                            <div class="p-3 bg-light border">
-                                <p class="small text-muted mb-3">Si respondiste "Sí", indica las veces que lo has pensado (1 = Poquísimas veces, 7 = Muchísimas veces) [cite: 379]</p>
-                                <div class="d-flex justify-content-between flex-wrap gap-2">
-                                    <div class="form-check"><input class="form-check-input" type="radio" name="p1_frecuencia" value="1"><label class="form-check-label">1</label></div>
-                                    <div class="form-check"><input class="form-check-input" type="radio" name="p1_frecuencia" value="2"><label class="form-check-label">2</label></div>
-                                    <div class="form-check"><input class="form-check-input" type="radio" name="p1_frecuencia" value="3"><label class="form-check-label">3</label></div>
-                                    <div class="form-check"><input class="form-check-input" type="radio" name="p1_frecuencia" value="4"><label class="form-check-label">4</label></div>
-                                    <div class="form-check"><input class="form-check-input" type="radio" name="p1_frecuencia" value="5"><label class="form-check-label">5</label></div>
-                                    <div class="form-check"><input class="form-check-input" type="radio" name="p1_frecuencia" value="6"><label class="form-check-label">6</label></div>
-                                    <div class="form-check"><input class="form-check-input" type="radio" name="p1_frecuencia" value="7"><label class="form-check-label">7</label></div>
+                                <div class="text-end mt-4">
+                                    <button type="button" class="btn btn-dark rounded-0 px-4 text-uppercase" onclick="nextStep(2)">Siguiente <i class="fas fa-arrow-right ms-2"></i></button>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="text-end mb-5">
-                        <button type="submit" class="btn btn-dark btn-lg rounded-0 px-5 text-uppercase tracking-wide">Finalizar Evaluación</button>
+                    <div class="step" id="step2">
+                        <div class="card border-0 shadow-sm rounded-0 mb-4">
+                            <div class="card-body p-4 p-md-5">
+                                <span class="badge bg-secondary mb-3 rounded-0">Pregunta 2 de 5</span>
+                                <h4 class="fw-bold mb-4">2. ¿Has deseado estar muerto (por ejemplo, ir a dormir y desear no levantarte)?</h4>
+                                <div class="d-flex gap-4 mb-4">
+                                    <div class="form-check"><input class="form-check-input" type="radio" name="p2_v" id="p2_si" value="1" onchange="toggleFrequency(2)"><label class="form-check-label fs-5" for="p2_si">Sí</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="radio" name="p2_v" id="p2_no" value="0" onchange="toggleFrequency(2)"><label class="form-check-label fs-5" for="p2_no">No</label></div>
+                                </div>
+                                <div class="p-3 bg-light border freq-container" id="freq_2">
+                                    <p class="small text-muted mb-2">Frecuencia (1 = Poquísimas veces, 7 = Muchísimas veces)</p>
+                                    <div class="d-flex justify-content-between flex-wrap gap-2">
+                                        <label class="small">1 <input type="radio" name="p2_f" value="1"></label>
+                                        <label class="small">2 <input type="radio" name="p2_f" value="2"></label>
+                                        <label class="small">3 <input type="radio" name="p2_f" value="3"></label>
+                                        <label class="small">4 <input type="radio" name="p2_f" value="4"></label>
+                                        <label class="small">5 <input type="radio" name="p2_f" value="5"></label>
+                                        <label class="small">6 <input type="radio" name="p2_f" value="6"></label>
+                                        <label class="small">7 <input type="radio" name="p2_f" value="7"></label>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between mt-4">
+                                    <button type="button" class="btn btn-outline-secondary rounded-0 px-4 text-uppercase" onclick="prevStep(1)">Anterior</button>
+                                    <button type="button" class="btn btn-dark rounded-0 px-4 text-uppercase" onclick="nextStep(3)">Siguiente <i class="fas fa-arrow-right ms-2"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step" id="step3">
+                        <div class="card border-0 shadow-sm rounded-0 mb-4">
+                            <div class="card-body p-4 p-md-5">
+                                <span class="badge bg-secondary mb-3 rounded-0">Pregunta 3 de 5</span>
+                                <h4 class="fw-bold mb-4">3. ¿Has pensado en quitarte la vida aunque realmente no lo fueras a hacer?</h4>
+                                <div class="d-flex gap-4 mb-4">
+                                    <div class="form-check"><input class="form-check-input" type="radio" name="p3_v" id="p3_si" value="1" onchange="toggleFrequency(3)"><label class="form-check-label fs-5" for="p3_si">Sí</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="radio" name="p3_v" id="p3_no" value="0" onchange="toggleFrequency(3)"><label class="form-check-label fs-5" for="p3_no">No</label></div>
+                                </div>
+                                <div class="p-3 bg-light border freq-container" id="freq_3">
+                                    <p class="small text-muted mb-2">Frecuencia (1 = Poquísimas veces, 7 = Muchísimas veces)</p>
+                                    <div class="d-flex justify-content-between flex-wrap gap-2">
+                                        <label class="small">1 <input type="radio" name="p3_f" value="1"></label>
+                                        <label class="small">2 <input type="radio" name="p3_f" value="2"></label>
+                                        <label class="small">3 <input type="radio" name="p3_f" value="3"></label>
+                                        <label class="small">4 <input type="radio" name="p3_f" value="4"></label>
+                                        <label class="small">5 <input type="radio" name="p3_f" value="5"></label>
+                                        <label class="small">6 <input type="radio" name="p3_f" value="6"></label>
+                                        <label class="small">7 <input type="radio" name="p3_f" value="7"></label>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between mt-4">
+                                    <button type="button" class="btn btn-outline-secondary rounded-0 px-4 text-uppercase" onclick="prevStep(2)">Anterior</button>
+                                    <button type="button" class="btn btn-dark rounded-0 px-4 text-uppercase" onclick="nextStep(4)">Siguiente <i class="fas fa-arrow-right ms-2"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step" id="step4">
+                        <div class="card border-0 shadow-sm rounded-0 mb-4">
+                            <div class="card-body p-4 p-md-5">
+                                <span class="badge bg-secondary mb-3 rounded-0">Pregunta 4 de 5</span>
+                                <h4 class="fw-bold mb-4">4. ¿Has considerado realmente quitarte la vida o has planificado cómo lo harías?</h4>
+                                <div class="d-flex gap-4 mb-4">
+                                    <div class="form-check"><input class="form-check-input" type="radio" name="p4_v" id="p4_si" value="1" onchange="toggleFrequency(4)"><label class="form-check-label fs-5" for="p4_si">Sí</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="radio" name="p4_v" id="p4_no" value="0" onchange="toggleFrequency(4)"><label class="form-check-label fs-5" for="p4_no">No</label></div>
+                                </div>
+                                <div class="p-3 bg-light border freq-container" id="freq_4">
+                                    <p class="small text-muted mb-2">Frecuencia (1 = Poquísimas veces, 7 = Muchísimas veces)</p>
+                                    <div class="d-flex justify-content-between flex-wrap gap-2">
+                                        <label class="small">1 <input type="radio" name="p4_f" value="1"></label>
+                                        <label class="small">2 <input type="radio" name="p4_f" value="2"></label>
+                                        <label class="small">3 <input type="radio" name="p4_f" value="3"></label>
+                                        <label class="small">4 <input type="radio" name="p4_f" value="4"></label>
+                                        <label class="small">5 <input type="radio" name="p4_f" value="5"></label>
+                                        <label class="small">6 <input type="radio" name="p4_f" value="6"></label>
+                                        <label class="small">7 <input type="radio" name="p4_f" value="7"></label>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between mt-4">
+                                    <button type="button" class="btn btn-outline-secondary rounded-0 px-4 text-uppercase" onclick="prevStep(3)">Anterior</button>
+                                    <button type="button" class="btn btn-dark rounded-0 px-4 text-uppercase" onclick="nextStep(5)">Siguiente <i class="fas fa-arrow-right ms-2"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step" id="step5">
+                        <div class="card border-0 shadow-sm rounded-0 mb-4">
+                            <div class="card-body p-4 p-md-5">
+                                <span class="badge bg-danger mb-3 rounded-0">Última pregunta</span>
+                                <h4 class="fw-bold mb-4">5. ¿Has intentado quitarte la vida?</h4>
+                                <div class="d-flex gap-4 mb-4">
+                                    <div class="form-check"><input class="form-check-input" type="radio" name="p5_v" id="p5_si" value="1" onchange="toggleFrequency(5)"><label class="form-check-label fs-5" for="p5_si">Sí</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="radio" name="p5_v" id="p5_no" value="0" onchange="toggleFrequency(5)"><label class="form-check-label fs-5" for="p5_no">No</label></div>
+                                </div>
+                                <div class="p-3 bg-light border freq-container" id="freq_5">
+                                    <p class="small text-muted mb-2">Frecuencia (1 = Poquísimas veces, 7 = Muchísimas veces)</p>
+                                    <div class="d-flex justify-content-between flex-wrap gap-2">
+                                        <label class="small">1 <input type="radio" name="p5_f" value="1"></label>
+                                        <label class="small">2 <input type="radio" name="p5_f" value="2"></label>
+                                        <label class="small">3 <input type="radio" name="p5_f" value="3"></label>
+                                        <label class="small">4 <input type="radio" name="p5_f" value="4"></label>
+                                        <label class="small">5 <input type="radio" name="p5_f" value="5"></label>
+                                        <label class="small">6 <input type="radio" name="p5_f" value="6"></label>
+                                        <label class="small">7 <input type="radio" name="p5_f" value="7"></label>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between mt-4">
+                                    <button type="button" class="btn btn-outline-secondary rounded-0 px-4 text-uppercase" onclick="prevStep(4)">Anterior</button>
+                                    <button type="button" class="btn btn-dark rounded-0 px-5 text-uppercase fw-bold" onclick="finishSurvey()">Finalizar Evaluación</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </form>
-
             </div>
         </div>
     </main>
+    <div id="instrumentoId" data-id="[[${idInstrumento}]]" style="display: none;"></div>
+    <script src="/js/cuestionario.js"></script>
+    <script>
+        function toggleFrequency(stepNum) {
+            const isYesSelected = document.getElementById('p' + stepNum + '_si').checked;
+            const freqContainer = document.getElementById('freq_' + stepNum);
+            
+            if (isYesSelected) {
+                freqContainer.style.display = 'block'; 
+            } else {
+                freqContainer.style.display = 'none'; 
+                
+                const freqRadios = document.querySelectorAll(`input[name="p${stepNum}_f"]`);
+                freqRadios.forEach(radio => radio.checked = false);
+            }
+        }
 
+        function startSurvey() {
+            document.getElementById('info-banner').style.display = 'none';
+            document.getElementById('step1').classList.add('active');
+            document.getElementById('progressBar').style.width = '20%';
+        }
+
+        function nextStep(stepNumber) {
+            const currentStepNum = stepNumber - 1;
+            
+            const selectedV = document.querySelector(`input[name="p${currentStepNum}_v"]:checked`);
+            if (!selectedV) {
+                mostrarAlerta("Por favor, selecciona Sí o No antes de continuar.");
+                return;
+            }
+
+            if (selectedV.value === "1") {
+                const selectedF = document.querySelector(`input[name="p${currentStepNum}_f"]:checked`);
+                if (!selectedF) {
+                    mostrarAlerta("Has indicado que 'Sí'. Por favor, selecciona con qué frecuencia (del 1 al 7).");
+                    return;
+                }
+            }
+
+            document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+            document.getElementById('step' + stepNumber).classList.add('active');
+
+            const progress = (stepNumber / 5) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function prevStep(stepNumber) {
+            document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+            document.getElementById('step' + stepNumber).classList.add('active');
+            
+            const progress = (stepNumber / 5) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function finishSurvey() {
+            const currentStepNum = 5; 
+            
+            // Validar Sí/No de la pregunta 5
+            const selectedV = document.querySelector(`input[name="p5_v"]:checked`);
+            if (!selectedV) {
+                mostrarAlerta("Por favor, selecciona Sí o No en la última pregunta antes de finalizar.");
+                return;
+            }
+
+            if (selectedV.value === "1") {
+                const selectedF = document.querySelector(`input[name="p5_f"]:checked`);
+                if (!selectedF) {
+                    mostrarAlerta("Has indicado que 'Sí'. Por favor, selecciona con qué frecuencia (del 1 al 7).");
+                    return;
+                }
+            }
+
+            // Envío del formulario al backnd
+            document.getElementById('pssForm').submit();
+        }
+
+
+        function mostrarAlerta(mensaje) {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Atención',
+                    text: mensaje,
+                    confirmButtonColor: '#212529'
+                });
+            } else {
+                alert(mensaje);
+            }
+        }
+    </script>
 </body>
 </html>

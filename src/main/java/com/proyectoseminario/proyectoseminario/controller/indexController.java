@@ -1,12 +1,16 @@
 package com.proyectoseminario.proyectoseminario.controller;
 
-import com.proyectoseminario.proyectoseminario.model.pacientes;
-import com.proyectoseminario.proyectoseminario.model.usuarios;
+import com.proyectoseminario.proyectoseminario.model.*;
+import com.proyectoseminario.proyectoseminario.repository.evaluacionesRepository;
+import com.proyectoseminario.proyectoseminario.repository.instrumentosRepository;
 import com.proyectoseminario.proyectoseminario.repository.pacientesRepository;
+import com.proyectoseminario.proyectoseminario.repository.preguntasRepository;
 import com.proyectoseminario.proyectoseminario.security.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -19,6 +23,13 @@ public class indexController {
 
     @Autowired
     pacientesRepository pacientesRepository;
+    @Autowired
+    instrumentosRepository instrumentosRepository;
+    @Autowired
+    preguntasRepository preguntasRepository;
+
+    @Autowired
+    evaluacionesRepository evaluacionesRepository;
 
     @GetMapping("/")
     public String loginmedico() {
@@ -122,5 +133,28 @@ public class indexController {
             redirectAttributes.addFlashAttribute("alertaError", "Error al editar paciente");
             return "redirect:/panel";
         }
+    }
+
+    @GetMapping("/selectInstrumento")
+    @ResponseBody
+    public List<instrumentos> selectInstrumento(){
+        return instrumentosRepository.findAll();
+    }
+
+    @GetMapping("/empezarCuestionario")
+    public String empezarCuestionario(
+            @RequestParam("instrumentoId") Integer instrumentoId,
+            @RequestParam("pacienteId") Integer pacienteId,
+            Model model){
+
+        model.addAttribute("instrumentoId", instrumentoId);
+        model.addAttribute("pacienteId", pacienteId);
+        return "cuestionario-ps";
+    }
+
+    @GetMapping("/generadorPreguntas/{id}")
+    @ResponseBody
+    public List<preguntas> generadorPreguntas(@PathVariable("id") Integer id){
+        return preguntasRepository.findByInstrumentoId(id);
     }
 }

@@ -104,6 +104,7 @@
     </div>
 </div>
 <div class="modal fade" id="modalVerPaciente" tabindex="-1" aria-hidden="true">
+
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content rounded-0 border-0 shadow">
             <div class="modal-header bg-primary text-white rounded-0">
@@ -191,6 +192,34 @@
             <div class="modal-footer bg-light rounded-0">
                 <button type="button" class="btn btn-outline-secondary rounded-0" data-bs-dismiss="modal">Cancelar</button>
                 <button type="submit"  form="formEditarPaciente" class="btn btn-secondary rounded-0 px-4">Actualizar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalSeleccionarTest" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-0 border-0 shadow">
+            <div class="modal-header bg-dark text-white rounded-0">
+                <h5 class="modal-title fw-bold text-uppercase small tracking-wide">
+                    <i class="fas fa-clipboard-check me-2"></i> Seleccionar Evaluación
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="formSeleccionarTest">
+                    <div class="mb-4">
+                        <label for="selectInstrumento" class="form-label small text-muted fw-bold">Instrumento Psicológico</label>
+                        <select class="form-select rounded-0 shadow-none" id="selectInstrumento" name="instrumento" required>
+                        </select>
+                        <div class="form-text small mt-2">Asegúrese de seleccionar el instrumento correcto para el paciente.</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer bg-light rounded-0">
+                <button type="button" class="btn btn-outline-secondary rounded-0" data-bs-dismiss="modal">Cancelar</button>
+                <button onclick="empezarCuestionario()" id="btnIniciarTest" class="btn btn-dark rounded-0 px-4">
+                    Iniciar Test <i class="fas fa-arrow-right ms-1"></i>
+                </button>
             </div>
         </div>
     </div>

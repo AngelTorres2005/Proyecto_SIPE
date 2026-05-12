@@ -1,6 +1,7 @@
 package com.proyectoseminario.proyectoseminario.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -14,6 +15,7 @@ public class evaluaciones {
     @Column(name = "id_evaluacion")
     private Integer id_evaluacion;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_paciente", nullable = false)
     private pacientes paciente;

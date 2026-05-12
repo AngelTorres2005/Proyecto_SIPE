@@ -2,49 +2,60 @@ document.addEventListener('DOMContentLoaded', () => {
     sweetAlertError();
     sweetAlertSuccess();
     pacientesContenedor();
+    selectInstrumento();
 });
 
-
+let pacienteActualId = null;
 /////////////////////////////BACKEND/////////////////////////////////////////////
 async function pacientesContenedor() {
     try {
         const contenedor = document.getElementById("pacientesContenedor");
-
         const response = await fetch("/pacientesContenedor");
         const pacientes = await response.json();
-
+        console.log(pacientes);
         let filasHTML = "";
 
         pacientes.forEach(paciente => {
-            console.log(paciente.id_paciente);
+            const ultimaEva = paciente.evaluaciones && paciente.evaluaciones.length > 0
+                ? paciente.evaluaciones[paciente.evaluaciones.length - 1]
+                : null;
+
+            const puntuacion = ultimaEva ? `${ultimaEva.puntuacion} / 5` : "N/A";
+            const riesgo = ultimaEva ? ultimaEva.nivel_riesgo : "Sin evaluación";
+
+            let badgeClass = "bg-secondary";
+            if (ultimaEva) {
+                badgeClass = ultimaEva.nivel_riesgo === 'Riesgo Alto' ? 'bg-danger' : 'bg-warning text-dark';
+            }
+
             filasHTML += `
-                <tr>
-                    <td class="px-4 fw-bold">${paciente.id_paciente}</td>
-                    <td>${paciente.nombre}</td>
-                    <td>${paciente.fecha_nacimiento}</td>
-                    
-                    <td>Escala Paykel (PSS)</td>
-                    <td class="text-center">4 / 5</td>
-                    <td><span class="badge bg-danger rounded-0 px-2 py-1">Riesgo Alto</span></td>
-                    
-                    <td class="px-1">
-                        <div class="d-flex justify-content-center gap-1" style="min-width: 180px;">
-                            <button class="btn btn-sm btn-outline-secondary rounded-0" title="Ver Info Completa" onclick="informacionPaciente('${paciente.id_paciente}', '${paciente.nombre}','${paciente.fecha_nacimiento}','${paciente.genero}','${paciente.email}','${paciente.notas_clinicas}')">
-                                <i class="fas fa-user"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-dark rounded-0" title="Editar Datos" onclick="modalEditarPaciente('${paciente.id_paciente}', '${paciente.nombre}','${paciente.fecha_nacimiento}','${paciente.genero}','${paciente.email}','${paciente.notas_clinicas}')">
-                                <i class="fas fa-user-edit"></i>
-                            </button>
-                            <a href="/cuestionario" class="btn btn-sm btn-dark rounded-0 px-2" title="Empezar Test">
-                                <i class="fas fa-play small me-1"></i> Test
-                            </a>
-                            <button onclick="eliminarPaciente(${paciente.id_paciente})" class="btn btn-sm btn-outline-danger rounded-0" title="Eliminar">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `;
+        <tr>
+            <td class="px-4 fw-bold">${paciente.id_paciente}</td>
+            <td>${paciente.nombre}</td>
+            <td>${paciente.fecha_nacimiento}</td>
+            
+            <td>${ultimaEva ? 'Escala Paykel (PSS)' : 'Ninguno'}</td>
+            <td class="text-center">${puntuacion}</td>
+            <td><span class="badge ${badgeClass} rounded-0 px-2 py-1">${riesgo}</span></td>
+            
+            <td class="px-1">
+                <div class="d-flex justify-content-center gap-1" style="min-width: 180px;">
+                    <button class="btn btn-sm btn-outline-secondary rounded-0" title="Ver Info Completa" onclick="informacionPaciente('${paciente.id_paciente}', '${paciente.nombre}','${paciente.fecha_nacimiento}','${paciente.genero}','${paciente.email}','${paciente.notas_clinicas}')">
+                        <i class="fas fa-user"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-dark rounded-0" title="Editar Datos" onclick="modalEditarPaciente('${paciente.id_paciente}', '${paciente.nombre}','${paciente.fecha_nacimiento}','${paciente.genero}','${paciente.email}','${paciente.notas_clinicas}')">
+                        <i class="fas fa-user-edit"></i>
+                    </button>
+                    <a onclick="modalContenedor(${paciente.id_paciente})" class="btn btn-sm btn-dark rounded-0 px-2" title="Empezar Test">
+                        <i class="fas fa-play small me-1"></i> Test
+                    </a>
+                    <button onclick="eliminarPaciente(${paciente.id_paciente})" class="btn btn-sm btn-outline-danger rounded-0" title="Eliminar">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `;
         });
         contenedor.innerHTML = filasHTML;
 
@@ -106,6 +117,37 @@ function modalEditarPaciente(id,nombre,fecha,genero,email,notas){
     document.getElementById('editar-notas_clinicas').value = notas;
     new bootstrap.Modal(modal).show();
 }
+function modalContenedor(idPaciente){
+    pacienteActualId = idPaciente;
+    const modal = document.getElementById("modalSeleccionarTest");
+    new bootstrap.Modal(modal).show();
+}
+function empezarCuestionario(){
+    const selectSeleccionado = document.getElementById("selectInstrumento").value;
+    if(!selectSeleccionado) {
+        window.alertaError = "Seleccione un instrumento primero";
+        sweetAlertError();
+        return;
+    }
+    window.location.href = `/empezarCuestionario?instrumentoId=${selectSeleccionado}&pacienteId=${pacienteActualId}`;
+}
+async function selectInstrumento(){
+    const select = document.getElementById("selectInstrumento");
+
+    const response = await fetch("/selectInstrumento");
+    const instrumentos = await response.json();
+
+    select.innerHTML = ""
+    select.innerHTML = '<option value="" selected disabled>Seleccione una prueba a aplicar...</option>'
+
+    instrumentos.forEach(instrumento => {
+        const option = document.createElement("option");
+        option.value = instrumento.id_instrumento;
+        option.textContent = instrumento.nombre;
+        select.appendChild(option);
+    })
+}
+
 //////////////////////////FRONTEND///////////////////////////////////////////////
 function sweetAlertError() {
     if (window.alertaError) {

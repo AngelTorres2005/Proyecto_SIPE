@@ -4,6 +4,8 @@ package com.proyectoseminario.proyectoseminario.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
+
 @Entity
 @Data
 @Table(name = "pacientes")
@@ -21,6 +23,9 @@ public class pacientes {
 
     @Column(name = "nombre")
     private String nombre;
+
+    @OneToMany(mappedBy = "paciente", fetch = FetchType.EAGER)
+    private List<evaluaciones> evaluaciones;
 
     @Column(name = "email")
     private String email;
