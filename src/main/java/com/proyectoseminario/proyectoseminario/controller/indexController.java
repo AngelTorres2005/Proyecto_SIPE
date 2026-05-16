@@ -6,9 +6,9 @@ import com.proyectoseminario.proyectoseminario.repository.instrumentosRepository
 import com.proyectoseminario.proyectoseminario.repository.pacientesRepository;
 import com.proyectoseminario.proyectoseminario.repository.preguntasRepository;
 import com.proyectoseminario.proyectoseminario.security.CustomUserDetails;
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("")
@@ -30,6 +31,13 @@ public class indexController {
 
     @Autowired
     evaluacionesRepository evaluacionesRepository;
+
+    private final ChatClient chatClient;
+
+    @Autowired
+    public indexController(ChatClient.Builder builder) {
+        this.chatClient = builder.build();
+    }
 
     @GetMapping("/")
     public String loginmedico() {
@@ -157,4 +165,24 @@ public class indexController {
     public List<preguntas> generadorPreguntas(@PathVariable("id") Integer id){
         return preguntasRepository.findByInstrumentoId(id);
     }
+
+    @GetMapping("/ia/recomendacion")
+    @ResponseBody
+    public Map<String, String> obtenerRecomendacion(@RequestParam Integer pacienteId) {
+        pacientes paciente = pacientesRepository.findById(pacienteId).orElseThrow();
+        evaluaciones ultimaEva = paciente.getEvaluaciones().get(paciente.getEvaluaciones().size() - 1);
+
+        String prompt = String.format(
+                "Actúa como un experto en psicología clínica. Basado en la escala PSS de suicido de paykel, el paciente " +
+                        "tiene una puntuación de %s (%s). Sus notas clínicas son: %s. " +
+                        "Genera 3 recomendaciones breves y profesionales para el médico tratante. Las recomendaciones en forma de lista y lo mas resumidas posibl,es no agregar" +
+                        "ninguna informacion adicional. SOLO DAME LA LISTA, NO ALGUNA OTRA PALABRA, La lista en vinetas",
+                ultimaEva.getPuntuacion(), ultimaEva.getNivel_riesgo(), paciente.getNotas_clinicas()
+        );
+
+        String respuesta = chatClient.prompt().user(prompt).call().content();
+
+        return Map.of("recomendacion", respuesta);
+    }
+
 }

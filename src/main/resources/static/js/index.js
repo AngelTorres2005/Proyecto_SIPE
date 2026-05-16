@@ -40,7 +40,7 @@ async function pacientesContenedor() {
             
             <td class="px-1">
                 <div class="d-flex justify-content-center gap-1" style="min-width: 180px;">
-                    <button class="btn btn-sm btn-outline-secondary rounded-0" title="Ver Info Completa" onclick="informacionPaciente('${paciente.id_paciente}', '${paciente.nombre}','${paciente.fecha_nacimiento}','${paciente.genero}','${paciente.email}','${paciente.notas_clinicas}')">
+                    <button class="btn btn-sm btn-outline-secondary rounded-0" title="Ver Info Completa" onclick="verPaciente('${paciente.id_paciente}', '${paciente.nombre}','${paciente.fecha_nacimiento}','${paciente.genero}','${paciente.email}','${paciente.notas_clinicas}')">
                         <i class="fas fa-user"></i>
                     </button>
                     <button class="btn btn-sm btn-outline-dark rounded-0" title="Editar Datos" onclick="modalEditarPaciente('${paciente.id_paciente}', '${paciente.nombre}','${paciente.fecha_nacimiento}','${paciente.genero}','${paciente.email}','${paciente.notas_clinicas}')">
@@ -95,8 +95,7 @@ async function eliminarPaciente(id) {
         }
     }
 }
-async function informacionPaciente(id,nombre,fecha,genero,email,notas){
-    console.log(nombre, fecha);
+async function verPaciente(id,nombre,fecha,genero,email,notas){
     const modal = document.getElementById("modalVerPaciente")
     document.getElementById("informacion-id-value").textContent = id;
     document.getElementById("informacion-nombre-value").textContent = nombre;
@@ -105,7 +104,7 @@ async function informacionPaciente(id,nombre,fecha,genero,email,notas){
     document.getElementById("informacion-email-value").textContent = email;
     document.getElementById("informacion-notas-value").textContent = notas;
     new bootstrap.Modal(modal).show();
-
+    informacionPaciente(id,nombre,fecha,genero,email,notas);
 }
 function modalEditarPaciente(id,nombre,fecha,genero,email,notas){
     const modal = document.getElementById('modalEditarPaciente');
@@ -147,6 +146,19 @@ async function selectInstrumento(){
         select.appendChild(option);
     })
 }
+async function informacionPaciente(id, nombre, fecha, genero, email, notas) {
+    const iaContenedor = document.getElementById("ia-recomendacion-value");
+    iaContenedor.innerHTML = '<div class="spinner-border spinner-border-sm text-primary"></div> Cargando...';
+
+    try {
+        const res = await fetch(`/ia/recomendacion?pacienteId=${id}`);
+        const data = await res.json();
+        iaContenedor.innerHTML = `<p class="small m-0">${data.recomendacion}</p>`;
+    } catch (error) {
+        iaContenedor.innerHTML = '<span class="text-danger small">No se pudo cargar la recomendación.</span>';
+    }
+}
+
 
 //////////////////////////FRONTEND///////////////////////////////////////////////
 function sweetAlertError() {
